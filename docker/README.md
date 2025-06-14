@@ -40,10 +40,10 @@ Slave nodes require Python and SSH capabilities for Ansible management. Key comp
 
 ```bash
 # Build master node image
-docker build -t ansible-master-minimal:rhel9-v1 -f Dockerfile-master-minimal .
+docker build -t ansible-master-minimal:rhel9-v1 -f Dockerfile-master-rhel9 .
 
 # Build slave node image
-docker build -t ansible-slave-minimal:rhel9-v1 -f Dockerfile-slave-minimal .
+docker build -t ansible-slave-minimal:rhel9-v1 -f Dockerfile-slave-rhel9 .
 
 ```
 
