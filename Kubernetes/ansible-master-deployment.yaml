@@ -1,0 +1,54 @@
+# ansible-master-deployment.yaml 
+# ANSIBLE-MASTER DEPLOYMENT IN SINGLE NODE MINIKUBE CLUSTER
+---
+# NAMESPACE
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ansible-cluster
+---
+# Using Default Storage Class
+# PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ansible-master-pvc
+  namespace: ansible-cluster
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+# ansible-master-deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ansible-master
+  namespace: ansible-cluster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ansible-master
+  template:
+    metadata:
+      labels:
+        app: ansible-master
+    spec:
+      containers:
+      - name: ansible-master-container
+        image: sayantan2k21/ansible-master-minimal:rhel9-v1
+        ports:
+        - containerPort: 22
+        volumeMounts:
+        - name: ansible-storage
+          mountPath: /home/ansible/projects
+        securityContext:
+          privileged: true  # Required only if you plan DinD, not mandatory here
+      volumes:
+      - name: ansible-storage
+        persistentVolumeClaim:
+          claimName: ansible-master-pvc
