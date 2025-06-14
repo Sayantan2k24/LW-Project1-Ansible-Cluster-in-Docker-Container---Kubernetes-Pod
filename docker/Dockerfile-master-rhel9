@@ -1,0 +1,44 @@
+FROM redhat/ubi9:latest
+
+# Install Python, pip, Ansible, and OpenSSH server
+RUN dnf -y update && \
+    dnf -y install \
+        python3 \
+        net-tools \
+        iputils \
+        python3-pip \
+        openssh-clients \
+        openssh-server \
+        sudo \
+    && dnf clean all
+
+# Install latest Ansible via pip
+RUN pip3 install --no-cache-dir ansible
+
+# Create ansible user with sudo access
+RUN useradd -d /home/ansible -s /bin/bash ansible && \
+    echo "ansible ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    echo "ansible:ansible123" | chpasswd
+
+# Create SSH directory structure
+RUN mkdir -p /home/ansible/.ssh && \
+    chown ansible:ansible /home/ansible/.ssh && \
+    chmod 700 /home/ansible/.ssh && \
+    ssh-keygen -A
+
+# Configure SSHD for public key auth only
+RUN echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config && \
+    echo "PasswordAuthentication no" >> /etc/ssh/sshd_config && \
+    echo "PermitRootLogin no" >> /etc/ssh/sshd_config && \
+    echo "AuthorizedKeysFile .ssh/authorized_keys" >> /etc/ssh/sshd_config
+
+# Expose SSH port
+EXPOSE 22
+
+# logged in user will be ansible
+# landing directory is /home/ansible
+USER ansible
+WORKDIR /home/ansible
+
+# Default command: run SSH daemon
+CMD ["sudo","/usr/sbin/sshd", "-D"]
