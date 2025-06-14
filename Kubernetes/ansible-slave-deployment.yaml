@@ -1,0 +1,25 @@
+# ansible-slave-deployment.yaml
+# ANSIBLE SLAVE NODES 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ansible-slave
+  namespace: ansible-cluster
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ansible-slave
+  template:
+    metadata:
+      labels:
+        app: ansible-slave
+    spec:
+      containers:
+      - name: ansible-slave-container
+        image: sayantan2k21/ansible-slave-minimal:rhel9-v1
+        ports:
+        - containerPort: 22
+        securityContext:
+          privileged: true  # Optional, only if needed for nested tasks
