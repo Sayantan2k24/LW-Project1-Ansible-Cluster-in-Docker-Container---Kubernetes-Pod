@@ -7,21 +7,6 @@ kind: Namespace
 metadata:
   name: ansible-cluster
 ---
-# Using Default Storage Class
-# PVC
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ansible-master-pvc
-  namespace: ansible-cluster
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: standard
----
 # ansible-master-deployment
 apiVersion: apps/v1
 kind: Deployment
