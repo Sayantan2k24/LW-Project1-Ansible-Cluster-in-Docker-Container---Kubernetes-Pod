@@ -1,0 +1,16 @@
+# ansible-master-pvc.yaml
+# Using Default Storage Class
+# PVC
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:Add commentMore actions
+  name: ansible-master-pvc
+  namespace: ansible-cluster
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
